@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-export type LogEntry = { id: string; username: string; facility: string; at: string; approved: boolean; reason?: string };
+export type LogEntry = { id: string; username: string; facility: string; at: string; approved: boolean; reason?: string | undefined };
 type State = { username: string | null; log: LogEntry[] };
 
 const KEY = "campusconnect-demo";

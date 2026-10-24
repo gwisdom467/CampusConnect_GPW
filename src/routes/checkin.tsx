@@ -18,7 +18,7 @@ export const Route = createFileRoute("/checkin")({
   component: () => <AppShell title="Facility Check-in">{() => <CheckIn />}</AppShell>,
 });
 
-type Outcome = { ok: boolean; facility: string; reason?: string };
+type Outcome = { ok: boolean; facility: string; reason?: string | undefined };
 type Detector = { detect: (v: HTMLVideoElement) => Promise<{ rawValue: string }[]> };
 
 function CheckIn() {
