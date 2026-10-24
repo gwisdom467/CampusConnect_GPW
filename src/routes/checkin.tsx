@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, CheckCircle2, XCircle, RotateCcw, FlaskConical } from "lucide-react";
 import { AppShell, DemoBadge } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { checkFacilityAccess, FACILITIES } from "@/lib/campus";
+import { checkEligibility, checkFacilityAccess, FACILITIES, findStudent } from "@/lib/campus";
 import { addLog, useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/checkin")({
@@ -18,7 +18,8 @@ export const Route = createFileRoute("/checkin")({
   component: () => <AppShell title="Facility Check-in">{() => <CheckIn />}</AppShell>,
 });
 
-type Outcome = { ok: boolean; facility: string; reason?: string | undefined };
+type Step = { label: string; ok: boolean; detail: string };
+type Outcome = { ok: boolean; facility: string; reason?: string | undefined; steps: Step[] };
 type Detector = { detect: (v: HTMLVideoElement) => Promise<{ rawValue: string }[]> };
 
 function CheckIn() {
@@ -48,7 +49,14 @@ function CheckIn() {
     const facility = r.facility?.name ?? "Unknown facility";
     const reason = r.ok ? undefined : r.reason;
     if (username) addLog({ username, facility, approved: r.ok, reason });
-    setOutcome({ ok: r.ok, facility, reason });
+    const student = findStudent(username);
+    const elig = student ? checkEligibility(student) : null;
+    const steps: Step[] = [
+      { label: "Signed in", ok: !!student, detail: student ? `${student.name} (${student.studentId})` : "Not signed in" },
+      { label: "Eligible for campus resources", ok: !!elig?.ok, detail: !elig ? "Skipped" : elig.ok ? "Enrolled, no holds on your account" : elig.reason },
+      { label: "Facility access", ok: r.ok, detail: r.ok ? `Permitted at ${facility}` : !elig?.ok ? "Skipped" : r.reason ?? "" },
+    ];
+    setOutcome({ ok: r.ok, facility, reason, steps });
   }
 
   async function startCamera() {
@@ -80,7 +88,16 @@ function CheckIn() {
         <h2 className="mt-3 text-2xl font-bold">{outcome.ok ? "Access approved" : "Access denied"}</h2>
         <p className="mt-1 font-medium">{outcome.facility}</p>
         <p className="text-sm text-muted-foreground">{new Date().toLocaleString()}</p>
+        {outcome.ok && <p className="mt-3 rounded-lg bg-success/10 p-3 text-sm font-medium text-success">You are eligible to access {outcome.facility}. Enjoy your visit!</p>}
         {outcome.reason && <p className="mt-3 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{outcome.reason}</p>}
+        <ul className="mt-4 space-y-2 text-left">
+          {outcome.steps.map((s) => (
+            <li key={s.label} className="flex gap-2 rounded-lg bg-card p-3 text-sm">
+              {s.ok ? <CheckCircle2 className="h-5 w-5 shrink-0 text-success" /> : <XCircle className="h-5 w-5 shrink-0 text-destructive" />}
+              <div><p className="font-semibold">{s.label}</p><p className="text-muted-foreground">{s.detail}</p></div>
+            </li>
+          ))}
+        </ul>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Button className="flex-1" onClick={() => setOutcome(null)}><RotateCcw className="h-4 w-4" /> {outcome.ok ? "Scan another" : "Try again"}</Button>
           <Button asChild variant="outline" className="flex-1"><Link to="/dashboard">View activity log</Link></Button>
