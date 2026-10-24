@@ -52,7 +52,7 @@ export function parseFacilityQr(payload: string): Facility | null {
 }
 
 /** Check 3: full check-in decision. A scanned QR alone never grants access. */
-export function checkFacilityAccess(sessionUsername: string | null, qrPayload: string): Result & { facility?: Facility } {
+export function checkFacilityAccess(sessionUsername: string | null, qrPayload: string): { ok: boolean; reason?: string; facility?: Facility } {
   const student = findStudent(sessionUsername);
   if (!student) return { ok: false, reason: "You are not signed in. Please sign in again." };
   const elig = checkEligibility(student);
