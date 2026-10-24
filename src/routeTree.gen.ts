@@ -10,33 +10,102 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckinRouteImport } from './routes/checkin'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as SessionsRouteImport } from './routes/sessions'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionsRoute = SessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/dashboard': typeof DashboardRoute
+  '/notifications': typeof NotificationsRoute
+  '/resources': typeof ResourcesRoute
+  '/sessions': typeof SessionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/dashboard': typeof DashboardRoute
+  '/notifications': typeof NotificationsRoute
+  '/resources': typeof ResourcesRoute
+  '/sessions': typeof SessionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/dashboard': typeof DashboardRoute
+  '/notifications': typeof NotificationsRoute
+  '/resources': typeof ResourcesRoute
+  '/sessions': typeof SessionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/notifications'
+    | '/resources'
+    | '/sessions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/notifications'
+    | '/resources'
+    | '/sessions'
+  id:
+    | '__root__'
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/notifications'
+    | '/resources'
+    | '/sessions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckinRoute: typeof CheckinRoute
+  DashboardRoute: typeof DashboardRoute
+  NotificationsRoute: typeof NotificationsRoute
+  ResourcesRoute: typeof ResourcesRoute
+  SessionsRoute: typeof SessionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +117,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sessions': {
+      id: '/sessions'
+      path: '/sessions'
+      fullPath: '/sessions'
+      preLoaderRoute: typeof SessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckinRoute: CheckinRoute,
+  DashboardRoute: DashboardRoute,
+  NotificationsRoute: NotificationsRoute,
+  ResourcesRoute: ResourcesRoute,
+  SessionsRoute: SessionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
